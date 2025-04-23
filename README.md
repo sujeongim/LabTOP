@@ -31,29 +31,17 @@ Create the Conda environment from the provided `environment.yml` file:
 conda env create -f environment.yml
 ```
 
-This sets up a Conda environment named `your-project-env` with Python and all dependencies.
+This sets up a Conda environment named `labtop` with Python and all dependencies.
 
 ### 3. Activate the Environment
 Activate the Conda environment:
-- **Linux/macOS**:
-  ```bash
-  conda activate your-project-env
-  ```
-- **Windows**:
-  ```bash
-  conda activate your-project-env
-  ```
-
-### 4. Set Up Environment Variables
-Copy the example environment file and fill in the required values:
 ```bash
-cp .env.example .env
+conda activate labtop
 ```
-Edit `.env` with your text editor (e.g., `nano`, `vim`, or VS Code) and add your values:
-```plaintext
-API_KEY=your-api-key
-DATABASE_URL=your-database-url
-```
+
+Install torch:
+```pip install torch==2.5.1 torchvision==0.18.1 torchaudio==2.5.1 --extra-index-url https://download.pytorch.org/whl/cu121```
+
 
 ### 5. Run the Setup Script
 Run the provided setup script to verify the environment:
