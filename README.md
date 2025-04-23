@@ -16,6 +16,7 @@ We believe that LabTOP will serve as an accurate and generalizable framework for
 - [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/products/distribution) installed.
 - `git` to clone the repository.
 - A terminal (e.g., Bash, PowerShell, or Command Prompt).
+- Raw EHR dataset ([MIMIC-IV](https://physionet.org/content/mimiciv/3.1/), [eICU](https://physionet.org/content/eicu-crd/2.0/), [HiRID](https://physionet.org/content/hirid/1.1.1/))
   
 ## Setup Instructions
 
@@ -45,12 +46,24 @@ pip install torch==2.5.1 torchvision==0.18.1 torchaudio==2.5.1 --extra-index-url
 ```
 
 
-### 5. Run the Setup Script
-Run the provided setup script to verify the environment:
-```bash
-bash setup.sh
+### 4. Preprocess
 ```
-For Windows, use:
-```bash
-setup.bat
+python scripts/preprocess.py data=mimiciv data_path="path_of_raw_dataset" dest_path=../data/mimiciv
 ```
+```
+python scripts/preprocess.py data=eicu data_path="path_of_raw_dataset" dest_path=../data/eicu
+```
+```
+python scripts/preprocess.py data=hirid data_path="path_of_raw_dataset" dest_path=../data/hirid
+```
+
+### 5. Train
+```
+python scripts/train.py data=mimiciv data_path=../data/mimiciv
+```
+
+### 5. Evaluate
+```
+python scripts/evaluate.py data=mimiciv data_path=../data/mimiciv
+```
+
