@@ -40,7 +40,9 @@ conda activate labtop
 ```
 
 Install torch:
-```pip install torch==2.5.1 torchvision==0.18.1 torchaudio==2.5.1 --extra-index-url https://download.pytorch.org/whl/cu121```
+```
+pip install torch==2.5.1 torchvision==0.18.1 torchaudio==2.5.1 --extra-index-url https://download.pytorch.org/whl/cu121
+```
 
 
 ### 5. Run the Setup Script
