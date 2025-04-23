@@ -1,0 +1,13 @@
+input2emb_model : DescEmb # model type
+model_path : false # model path if try to continue learning
+embed_dim : 768    # 768 : bert-base
+hidden_dim : 768    # hidden_dim 
+n_heads : 12
+n_layers : 12 
+dropout : 0.1
+type_token: false
+dpe : false
+sinusodial : false
+text_post_proj : false
+map_layers : 1 # ????
+need_weights: false

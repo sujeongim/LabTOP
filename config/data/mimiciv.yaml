@@ -1,0 +1,39 @@
+data_path : ${data_path}
+raw_data_path : /nfs_data_storage/mimic-iv-3.0/physionet.org/files/mimiciv/3.0/
+cohort_path : ../../preprocessed_data/mimiciv/mimiciv_cohort_3.0_lab.csv
+dest_path : data
+
+num_token : false
+num_xval : false
+train_only_lab : true
+use_only_lab : false
+no_col_name : true
+remove_longer_icu : false
+    
+seq_method : one_icu
+
+num_bucket : false 
+num_bucket_dict_path : data/mimiciv_lab_emar_input_procedure_output_micro/num_bucket_dict.json
+num_bucket_num : 5 
+all_num_bucket : false #false
+no_bracket : false
+num_bucket_per_item : false
+
+only_top_10 : false
+time_gap : text # text, token
+no_time : false
+timeoffset : datetime # abs
+
+base_info : true
+
+lab_table: labevents
+
+add_weekday : true
+set_num_bucket : false
+max_day_len : 250
+
+
+add_end_of_event : true
+# just for gpt 4o
+sampling: false
+sampling_ratio: 0.1

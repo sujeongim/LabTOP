@@ -1,0 +1,33 @@
+defaults:
+  - data : base_dataset
+  - model : gpt_base
+  - train : train_base 
+  - test : test_base
+
+
+data_name : mimiciv
+model_name : labtop # xgboost, genhpf, labtop, llm
+main_gpu_id : 0
+device_num : '0, 1, 2, 3'
+data_type : 'hf_dataset'
+
+# Destination               
+data_path : ../data/mimiciv_labevents
+dest_path : ../data/mimiciv_labevents
+
+# dest_path
+max_seq_len : 4096
+
+for_train : true
+
+mode : 
+  debugging_mode : false
+
+
+# for xgboost and genhpf
+num_workers : 8
+split : train
+
+# genhpf
+limit_events : true
+limit_num_tokens : 4096

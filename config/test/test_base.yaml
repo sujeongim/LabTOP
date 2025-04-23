@@ -1,0 +1,45 @@
+#model_path : /nfs_edlab/sjim/EHR-GPT/trained_models/2024-03-25-22-40-34/DataPath=only_glucose_num_bucket_one_icu_removelongericuFalse_MIMICIV_HPtunning_BatchSize=32_NumLayers=12_NumHeads=8_ActFunc=gelu_LearningRate=0.0001_EmbDim=512_GradNormClip=0.25/loss_0.8606acc_0.7029ValuAcc_0.4003epoch48_model.pt
+
+#end_token', default='dl', type=str
+top_k : 1
+top_p : 0.0
+beam_width : 0
+event_type : labevents #choices=["labevents", "chartevents", "emars", "inputevents", "inputevents_cv", "inputevents_mv", "prescriptions"]
+verbose : true # whether to print logits 
+
+group_list : "[1, 5, 10, 15, 20, 30, 40, 60, 61, 120]" # "[1, 720]" # 
+eval_method : buckets # choices=['5_buckets', 'normal_abnormal']
+group_by : "btw_events" # ["btw_events", "btw_levels"]
+seperate_items : false
+metric : "mae" # recall, precision
+bucket_match: false # whether to match the buckets when num digit
+bucket_eval_by_5 : false
+rand_perm : false
+
+num_em : false
+partial_points : false
+
+freq: false
+
+use_wandb: true
+n_jobs : 1
+
+vllm : false
+batch_size: 10000 # batch inference
+first_event_in : icu # sample, icu
+exclude_first_event : false
+only_first_event : false
+exclude_first_event_by_sample : false
+only_first_event_by_sample : false
+
+
+prev_value : false
+mean_prev_value : false
+
+# llm
+sampled : false
+
+logprobs : false
+
+# debug
+sample_size : 10000

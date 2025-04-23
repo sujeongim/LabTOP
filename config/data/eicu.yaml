@@ -1,0 +1,37 @@
+data_path : ${data_path}
+raw_data_path : /nfs_data_storage/eicu/
+cohort_path : ../../preprocessed_data/eicu/cohort.csv
+dest_path : data
+
+num_token : false
+num_xval : false
+train_only_lab : true
+use_only_lab : false
+no_col_name : true
+remove_longer_icu : false
+    
+seq_method : one_icu
+
+num_bucket : false 
+num_bucket_dict_path : None
+num_bucket_num : 5 
+all_num_bucket : false #false
+no_bracket : false
+num_bucket_per_item : false
+
+only_top_10 : false
+time_gap : text # text, token
+no_time : false
+timeoffset : datetime # gap, datetime
+
+base_info : true
+
+add_weekday : false
+set_num_bucket : false
+max_day_len : 507
+
+lab_table: lab
+add_end_of_event : true
+# just for gpt 4o
+sampling: false
+sampling_ratio: 0.1

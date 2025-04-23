@@ -1,0 +1,35 @@
+use_wandb : true
+hp_tuning: false
+model_path : false
+huggingface : true
+
+verbose : false
+
+# trainer
+multi_seed : true
+seeds : [2025]
+seed : 42
+lr : 1e-4
+epochs : 35
+batch_size : 32
+patience : 10
+compare : decrease
+update_target : scaled_mae
+activation_func : gelu
+grad_norm_clip : 1
+weight_decay : 0.0 
+dist_parallel : false
+rand_perm : true
+pos_enc_by_time : false
+type_token: false
+dpe : false
+
+train_only_value_valueuom : false
+train_all : false
+
+# best model, early stop mode
+early_stop_mode : max  # choices=['min', 'max']
+best_model_criteria: value_acc # choices=['loss', 'acc', 'value_acc']
+pretrained_gpt : false
+
+gradient_accumulation_steps : 4
