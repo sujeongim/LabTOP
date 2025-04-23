@@ -11,21 +11,56 @@ We believe that LabTOP will serve as an accurate and generalizable framework for
 
 
 
-## Reproducing Guide
-### Setting Environment
-- Conda Env
+
+## Prerequisites
+- [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/products/distribution) installed.
+- `git` to clone the repository.
+- A terminal (e.g., Bash, PowerShell, or Command Prompt).
+  
+## Setup Instructions
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/sjim/labtop.git
+cd your-repo
 ```
-conda create -n labtop python=3.10
+
+### 2. Create the Conda Environment
+Create the Conda environment from the provided `environment.yml` file:
+```bash
+conda env create -f environment.yml
 ```
+
+This sets up a Conda environment named `your-project-env` with Python and all dependencies.
+
+### 3. Activate the Environment
+Activate the Conda environment:
+- **Linux/macOS**:
+  ```bash
+  conda activate your-project-env
+  ```
+- **Windows**:
+  ```bash
+  conda activate your-project-env
+  ```
+
+### 4. Set Up Environment Variables
+Copy the example environment file and fill in the required values:
+```bash
+cp .env.example .env
 ```
-conda activate labtop
+Edit `.env` with your text editor (e.g., `nano`, `vim`, or VS Code) and add your values:
+```plaintext
+API_KEY=your-api-key
+DATABASE_URL=your-database-url
 ```
-- Install Requirements
+
+### 5. Run the Setup Script
+Run the provided setup script to verify the environment:
+```bash
+bash setup.sh
 ```
-pip install torch==2.5.1 torchvision==0.20.1 torchaudio==2.5.1 --index-url https://download.pytorch.org/whl/cu121
+For Windows, use:
+```bash
+setup.bat
 ```
-```
-pip install -r requirements.txt
-```
-***
-### LabTOP
