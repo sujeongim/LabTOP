@@ -17,9 +17,10 @@ from functools import partial
 import multiprocessing
 from collections import defaultdict
 from omegaconf import DictConfig
-
-from utils import get_tokenizer, time_to_minutes
-from feature import MIMICIV, eICU, HIRID
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from core.utils.helpers import get_tokenizer, time_to_minutes
+from core.utils.feature import MIMICIV, eICU, HIRID
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ class EHRProcessorBase(ABC):
         self.cfg = cfg
         self.ehr_info = ehr_info
         self.data_path = Path(cfg.data_path)
-        self.dest_path = Path(cfg.dest_path) / f"{cfg.data_name}_{'_'.join(cfg.use_tables)}_{cfg.value_type}_{cfg.timeoffset}"
+        self.dest_path = Path(cfg.dest_path) / f"{cfg.data_name}_{'_'.join(cfg.data.use_tables)}_{cfg.data.value_type}_{cfg.data.timeoffset}"
         self.dest_path.mkdir(parents=True, exist_ok=True)
         self.stayid_key = ehr_info.stayid_key
         self.patientid_key = ehr_info.patientid_key
@@ -56,7 +57,7 @@ class EHRProcessor(EHRProcessorBase):
         super().__init__(cfg, ehr_info)
         self.tokenizer = get_tokenizer(cfg)
         self.cohort = None
-        self.num_bucket_dict = {} if cfg.value_type == 'num_bucket' else None
+        self.num_bucket_dict = {} if cfg.data.value_type == 'num_bucket' else None
         self.day_tokens = torch.tensor([
             self.tokenizer.encode(f'[DAY_{i}]', add_special_tokens=False)[0]
             for i in range(1, cfg.data.max_day_len + 1)
@@ -84,7 +85,7 @@ class EHRProcessor(EHRProcessorBase):
         """Load and filter ICU stays based on minimum length of stay."""
         icu = pd.read_csv(self.data_path / self.ehr_info.icustay_fname)
         icu = self._make_compatible(icu)
-        return icu[icu['los'] >= (self.cfg.min_los / 24)]
+        return icu[icu['los'] >= (self.cfg.data.min_los / 24)]
 
     def _make_compatible(self, icu: pd.DataFrame) -> pd.DataFrame:
         """Ensure ICU data compatibility across datasets."""
@@ -93,7 +94,7 @@ class EHRProcessor(EHRProcessorBase):
     def _process_tables(self) -> pd.DataFrame:
         """Process specified tables and concatenate results."""
         total_table = None
-        for table_name in self.cfg.use_tables:
+        for table_name in self.cfg.data.use_tables:
             logger.info(f"Processing table: {table_name}")
             table = self._process_table(table_name)
             table = self._process_columns(table, table_name)
@@ -131,13 +132,13 @@ class EHRProcessor(EHRProcessorBase):
             table = table[table[self.stayid_key].isin(self.cohort[self.stayid_key])]
         table = table[(table[time_stamp_key] >= table['intime']) & (table[time_stamp_key] <= table['outtime'])]
         
-        if self.cfg.timeoffset == 'abs':
+        if self.cfg.data.timeoffset == 'abs':
             table['time'] = ((table[time_stamp_key] - table['intime']).dt.total_seconds() / 60).round(4)
-        elif self.cfg.timeoffset == 'datetime':
+        elif self.cfg.data.timeoffset == 'datetime':
             table['time'] = table[time_stamp_key]
             table['day_passed'] = (table[time_stamp_key].dt.date - table['intime'].dt.date).dt.days
         else:
-            raise ValueError(f"Invalid timeoffset: {self.cfg.timeoffset}")
+            raise ValueError(f"Invalid data.timeoffset: {self.cfg.data.timeoffset}")
         
         return table.drop(columns=[time_stamp_key, 'intime', 'outtime'])
 
@@ -270,7 +271,7 @@ class EHRProcessor(EHRProcessorBase):
                 tokens, types = torch.tensor([]), torch.tensor([])
             tokens = torch.cat((tokens, event_toks))
             types = torch.cat((types, event_types))
-            prev_time = int(event_text[0]) if self.cfg.timeoffset == 'abs' else None
+            prev_time = int(event_text[0]) if self.cfg.data.timeoffset == 'abs' else None
         if len(tokens) > 0:
             final_tokens = torch.cat((base_tokens, tokens)) if base_info else tokens
             final_types = torch.cat((base_types, types)) if base_info else types
@@ -323,7 +324,7 @@ class EHRProcessor(EHRProcessorBase):
                     logger.warning(f"Skipping non-numeric lab value for {event_text[2]}: {event_text[3]}")
             icu_tokens = torch.cat((icu_tokens, event_toks)).to(torch.int32)
             icu_types = torch.cat((icu_types, event_types)).to(torch.int32)
-            prev_time = int(event_text[0]) if self.cfg.timeoffset == 'abs' else None
+            prev_time = int(event_text[0]) if self.cfg.data.timeoffset == 'abs' else None
         return results
 
     def _tokenize_event(self, event_text: List, split: str, prev_time: Optional[int]) -> Tuple[torch.Tensor, torch.Tensor]:
@@ -332,7 +333,7 @@ class EHRProcessor(EHRProcessorBase):
         table_text, item_text = event_text[1], event_text[2]
         for j, c in enumerate(event_text):
             if c not in ('', 'nan'):
-                if self.cfg.timeoffset == 'abs' and j == 0:
+                if self.cfg.data.timeoffset == 'abs' and j == 0:
                     time_gap = int(c) - prev_time if prev_time is not None else int(c)
                     c = f'[{time_gap}]'
                 if self.cfg.data.num_bucket and self._is_convertible_to_float(c):
@@ -434,7 +435,7 @@ class HIRIDProcessor(EHRProcessor):
         self._extract_icu()
         icu = pd.read_csv(self.data_path / self.ehr_info.icustay_fname)
         icu = self._make_compatible(icu)
-        return icu[icu['los'] >= (self.cfg.min_los / 24)]
+        return icu[icu['los'] >= (self.cfg.data.min_los / 24)]
 
     def _extract_icu(self):
         """Extract HIRID data from tar files."""

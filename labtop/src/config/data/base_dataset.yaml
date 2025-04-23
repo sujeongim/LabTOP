@@ -3,6 +3,8 @@ raw_data_path : mimic-iv-3.0/physionet.org/files/mimiciv/3.0/
 cohort_path : mimiciv_cohort_3.0.csv
 dest_path : data
 
+min_los : 6
+
 num_token : false
 num_xval : false
 train_only_lab : true

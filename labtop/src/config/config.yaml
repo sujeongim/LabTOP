@@ -1,5 +1,5 @@
 defaults:
-  - data : base_dataset
+  - data : mimiciv
   - model : gpt_base
   - train : train_base 
   - test : test_base
@@ -12,8 +12,8 @@ device_num : '0, 1, 2, 3'
 data_type : 'hf_dataset'
 
 # Destination               
-data_path : ../data/mimiciv_labevents
-dest_path : ../data/mimiciv_labevents
+data_path : /nfs_data_storage/mimic-iv-3.0/physionet.org/files/mimiciv/3.0/
+dest_path : ../data/mimiciv/
 
 # dest_path
 max_seq_len : 4096

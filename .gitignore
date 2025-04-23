@@ -1,0 +1,17 @@
+# Conda environment
+.conda/
+conda-bld/
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE files
+.vscode/
+.idea/
+
+# data
+labtop/data/
+
+# logs
+labtop/src/outputs/
