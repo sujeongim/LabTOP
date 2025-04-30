@@ -66,4 +66,15 @@ python scripts/train.py data=mimiciv data_path=../data/mimiciv
 ```
 python scripts/evaluate.py data=mimiciv data_path=../data/mimiciv
 ```
+---
+## Citation
 
+Feel free to cite us if you like LabTOP.
+
+```bibtex
+@article{im2025labtop,
+  title={LabTOP: A Unified Model for Lab Test Outcome Prediction on Electronic Health Records},
+  author={Im, Sujeong and Oh, Jungwoo and Choi, Edward},
+  journal={arXiv preprint arXiv:2502.14259},
+  year={2025}
+}
