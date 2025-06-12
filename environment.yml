@@ -1,0 +1,4 @@
+name: labtop
+channels:
+  - defaults
+prefix: /nfs_edlab/sjim/anaconda3/envs/labtop
