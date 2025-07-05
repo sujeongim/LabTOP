@@ -1,6 +1,6 @@
 # LabTOP: A Unified Model for Lab Test Outcome Prediction on Eletronic Health Records
 
-**🏆 LabTOP was awarded the CHIL 2025 Best Paper Award in Track 2: Applications & Practice!**
+**🏆 LabTOP was awarded the [CHIL 2025](https://chil.ahli.cc/papers/) Best Paper Award in Track 2: Applications & Practice!**
 
 > Lab tests are fundamental for diagnosing diseases and monitoring patient conditions. However, frequent testing can be burdensome for patients, and test results may not always be immediately available. 
 To address these challenges, we propose LabTOP, a unified model that predicts lab test outcomes by leveraging autoregressive generative modeling approach on EHR data.
