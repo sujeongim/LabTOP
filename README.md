@@ -28,7 +28,7 @@ We believe that LabTOP will serve as an accurate and generalizable framework for
 ### 1. Clone the Repository
 ```bash
 git clone https://github.com/sjim/labtop.git
-cd your-repo
+cd LabTOP
 ```
 
 ### 2. Create the Conda Environment
