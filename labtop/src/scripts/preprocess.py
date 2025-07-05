@@ -4,6 +4,7 @@ from typing import Type
 import logging
 import sys
 import os
+import traceback
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.utils.ehr_processor import EHRProcessorFactory, EHRBase
 from core.utils.feature import MIMICIV, eICU, HIRID
@@ -75,10 +76,12 @@ class EHRPipeline:
             self.logger.info("Pipeline completed successfully")
             
         except ValueError as ve:
-            self.logger.error(f"Configuration error: {ve}")
+            tb_str = traceback.format_exc()
+            self.logger.error(f"Configuration error: {ve}\n{tb_str}")
             sys.exit(1)
         except Exception as e:
-            self.logger.error(f"Pipeline execution failed: {e}")
+            tb_str = traceback.format_exc()
+            self.logger.error(f"Pipeline execution failed: {e}\n{tb_str}")
             sys.exit(1)
 
 @hydra.main(version_base=None, config_path="../config", config_name="config")

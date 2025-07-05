@@ -1,5 +1,6 @@
 data_path : ${data_path}
 raw_data_path : /nfs_data_storage/mimic-iv-3.0/physionet.org/files/mimiciv/3.0/
+ext : .csv
 
 # cohort
 use_tables :

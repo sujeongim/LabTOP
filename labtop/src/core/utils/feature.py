@@ -13,7 +13,7 @@ class MIMICIV(EHRBase):
                 self.raw_data_path = cfg.data.raw_data_path
             except:
                 self.raw_data_path = None
-        self.ext = ".csv.gz"
+        self.ext = cfg.data.ext
 
         self.icustay_fname = "icu/icustays" + self.ext
         self.patient_fname = "hosp/patients" + self.ext
@@ -157,7 +157,7 @@ class eICU(EHRBase):
             self.raw_data_path = cfg.raw_data_path
         except:
             self.raw_data_path = cfg.data.raw_data_path
-        self.ext = ".csv"
+        self.ext = cfg.data.ext
 
         self.icustay_fname = "patient" + self.ext
         self.patient_fname = "patient" + self.ext

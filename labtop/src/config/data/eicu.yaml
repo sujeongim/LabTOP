@@ -1,6 +1,6 @@
 data_path : ${data_path}
 raw_data_path : /nfs_data_storage/eicu/
-
+ext : .csv
 
 #cohort
 use_tables :
