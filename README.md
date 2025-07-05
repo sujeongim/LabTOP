@@ -32,26 +32,21 @@ cd LabTOP
 ```
 
 ### 2. Create the Conda Environment
-Create the Conda environment from the provided `environment.yml` file:
+Create the Conda environment:
 ```bash
+conda env create -n labtop
+conda activate labtop
+python3 -m pip install torch torchvision torchaudio
+```
+### 3. Install all dependencies
+```
 conda env create -f environment.yml
 ```
 
-This sets up a Conda environment named `labtop` with Python and all dependencies.
-
-### 3. Activate the Environment
-Activate the Conda environment:
-```bash
-conda activate labtop
-```
-
-Install torch:
-```
-pip install torch==2.5.1 torchvision==0.18.1 torchaudio==2.5.1 --extra-index-url https://download.pytorch.org/whl/cu121
-```
-
-
 ### 4. Preprocess
+```
+cd labtop/src
+```
 ```
 python scripts/preprocess.py data=mimiciv data_path="path_of_raw_dataset" dest_path=../data/mimiciv
 ```
