@@ -5,6 +5,7 @@ import logging
 import sys
 import os
 import traceback
+import multiprocessing
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from core.utils.ehr_processor import EHRProcessorFactory, EHRBase
 from core.utils.feature import MIMICIV, eICU, HIRID
@@ -25,6 +26,11 @@ class EHRConfigValidator:
         
         if cfg.data_name.lower() not in EHRFactory.get_supported_datasets():
             raise ValueError(f"Unsupported data source: {cfg.data_name}")
+        
+        # 병렬화 설정 검증
+        if hasattr(cfg, 'n_workers') and cfg.n_workers > multiprocessing.cpu_count():
+            logger.warning(f"n_workers ({cfg.n_workers}) exceeds CPU count ({multiprocessing.cpu_count()}). Setting to CPU count.")
+            cfg.n_workers = multiprocessing.cpu_count()
 
 class EHRFactory:
     """Factory for creating EHR instances."""
