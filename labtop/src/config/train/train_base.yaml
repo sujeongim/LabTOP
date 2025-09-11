@@ -10,7 +10,7 @@ multi_seed : true
 seeds : [2025]
 seed : 42
 lr : 1e-4
-epochs : 35
+epochs : 15
 batch_size : 32
 patience : 10
 compare : decrease
@@ -29,7 +29,7 @@ train_all : false
 
 # best model, early stop mode
 early_stop_mode : max  # choices=['min', 'max']
-best_model_criteria: value_acc # choices=['loss', 'acc', 'value_acc']
+best_model_criteria: acc # value_acc # choices=['loss', 'acc', 'value_acc']
 pretrained_gpt : false
 
 gradient_accumulation_steps : 4

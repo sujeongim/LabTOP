@@ -3,7 +3,24 @@ from omegaconf import DictConfig
 import re
 import os
 import pickle
-from data.dataset import EHRGPTDataset, PromptTestDataset
+from core.data.dataset import EHRGPTDataset, PromptTestDataset
+import logging
+from typing import List, Tuple
+import argparse
+import random
+import numpy as np
+from pathlib import Path
+import torch
+import glob
+import math
+import time
+import datetime
+import sys
+import warnings
+import multiprocessing
+logging.basicConfig(level=logging.INFO)
+
+logger = logging.getLogger(__name__)
 
 def ensure_dir(path):
     """
@@ -21,7 +38,7 @@ def get_tokenizer(cfg):
         num_added = tokenizer.add_special_tokens({
             "additional_special_tokens": special_tokens
         })
-        print("We have added", num_added, "tokens\n")
+        logger.info(f"We have added {num_added} tokens\n")
     
     return tokenizer
 
@@ -80,11 +97,10 @@ def make_dataset(cfg, tokenizer, prompt_test=False):
         train_dataset = valid_dataset = None
         test_dataset = load_test_dataset(cfg, tokenizer, data_path, prompt_test)
     else:
-        print('Get data file')
         train_dataset = EHRGPTDataset(cfg, tokenizer, os.path.join(data_path, f'train_dataset_{cfg.max_seq_len}'), train=True)
         valid_dataset = EHRGPTDataset(cfg, tokenizer, os.path.join(data_path, f'valid_dataset_{cfg.max_seq_len}'), train=False)
         test_dataset = load_validation_or_none(cfg, tokenizer, data_path)
-
+        logger.info('Get data file')
     return train_dataset, valid_dataset, test_dataset, None
 
 def load_test_dataset(cfg, tokenizer, data_path, prompt_test):

@@ -158,6 +158,7 @@ class EHRGPTDataset:
             if self.cfg.train.pos_enc_by_time
             else torch.arange(len(input_data))
         )
+        
 
         return input_data, input_train_mask, pos_enc.long()
 

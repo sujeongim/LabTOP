@@ -108,6 +108,8 @@ class EHRProcessor(EHRProcessorBase):
         if getattr(cfg, 'debugging_mode', False):
             logging.getLogger().setLevel(logging.DEBUG)
             logger.setLevel(logging.DEBUG)
+            
+        self.use_tables = sorted(cfg.data.use_tables)
 
     def extract_data(self):
         """Extract and process raw EHR data, saving to HDF5."""
@@ -139,6 +141,11 @@ class EHRProcessor(EHRProcessorBase):
         
         # Training datasets
         for split in ['train', 'valid']:
+            # if there is no training data
+            target_dir = self.dest_path / f"{split}_dataset_{self.cfg.max_seq_len}"
+            if target_dir.exists():
+                logger.info(f"Skipping {split} dataset creation, already exists: {target_dir}")
+                continue
             self._make_training_dataset(split)
             self._log_memory_usage(f"After making {split} training dataset")
         
@@ -187,11 +194,11 @@ class EHRProcessor(EHRProcessorBase):
             return table[available_cols]
         
         # 병렬로 테이블 처리
-        logger.info(f"Processing {len(self.cfg.data.use_tables)} tables with {self.n_workers} workers")
+        logger.info(f"Processing {len(self.use_tables)} tables with {self.n_workers} workers")
         table_results = []
         
         with ThreadPoolExecutor(max_workers=self.n_workers) as executor:
-            futures = [executor.submit(process_single_table, table_name) for table_name in self.cfg.data.use_tables]
+            futures = [executor.submit(process_single_table, table_name) for table_name in self.use_tables]
             
             for future in tqdm(as_completed(futures), total=len(futures), desc="Processing tables"):
                 table_results.append(future.result())
@@ -886,14 +893,19 @@ class EHRProcessor(EHRProcessorBase):
                 for icu_id in chunk_data:
                     ehr = h5_data['ehr'][icu_id]
                     events = self._process_icu_events_for_inference(ehr, split)
+                    # breakpoint()
                     
                     for event_data in events:
                         hf_dataset['icu_id'].append(icu_id)
-                        hf_dataset.update(event_data)
+                        for k in event_data.keys():
+                            if type(event_data[k])==float:
+                                hf_dataset[k].append(event_data[k])
+                            else:
+                                hf_dataset[k].append(event_data[k].to(torch.int32))
                         if split == "test":
                             unique_tokens_chunk = torch.cat((unique_tokens_chunk, event_data['prompt_tokens'].to(torch.int32))).unique()
                             unique_tokens_chunk = torch.cat((unique_tokens_chunk, event_data['lab_tokens'].to(torch.int32))).unique()
-            
+            breakpoint()
             return hf_dataset, unique_tokens_chunk
         
         # 병렬로 청크 처리
@@ -910,6 +922,8 @@ class EHRProcessor(EHRProcessorBase):
         merged_dataset = defaultdict(list)
         for hf_dataset, unique_tokens_chunk in chunk_results:
             for key in hf_dataset:
+                if type(hf_dataset[key])==float: 
+                    hf_dataset[key] = [hf_dataset[key]]
                 merged_dataset[key].extend(hf_dataset[key])
             with self._lock:
                 self.unique_tokens = torch.cat((self.unique_tokens, unique_tokens_chunk)).unique()
@@ -1062,7 +1076,7 @@ class EHRProcessor(EHRProcessorBase):
             
             # value 추가 (있는 경우)
             current_value = None
-            if values and i < len(values) and values[i] not in ('', 'nan', 'None'):
+            if values and i < len(values) and values[i] not in ('', 'nan', 'None', '_ _ _', '___'):
                 event_text.append(values[i])
                 try:
                     current_value = float(values[i])
@@ -1070,7 +1084,7 @@ class EHRProcessor(EHRProcessorBase):
                     current_value = None
             
             # valueuom 추가 (있는 경우)
-            if valueuoms and i < len(valueuoms) and valueuoms[i] not in ('', 'nan', 'None'):
+            if valueuoms and i < len(valueuoms) and valueuoms[i] not in ('', 'nan', 'None', '_ _ _', '___'):
                 event_text.append(valueuoms[i])
             
             if tablename in ['labevents', 'lab', 'observation_tables'] and itemname in ('_ _ _', '___'):
@@ -1090,7 +1104,11 @@ class EHRProcessor(EHRProcessorBase):
                     final_types = torch.cat((base_types, prompt_types)) if self.cfg.data.base_info else prompt_types
                     
                     # lab_value에 실제 값 사용 (있는 경우)
-                    lab_value = current_value if current_value is not None else float(time.replace(' ', ''))
+                    lab_value = current_value #if current_value is not None else float(time.replace(' ', ''))
+                    
+                    if lab_value is None:
+                        logger.warning(f"Skipping non-numeric lab value for {itemname}: {values[i] if values and i < len(values) else 'N/A'}")
+                        continue
                     
                     results.append({
                         'prompt_tokens': final_prompt.to(torch.int32),

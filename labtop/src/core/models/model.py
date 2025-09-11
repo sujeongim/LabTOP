@@ -4,17 +4,17 @@ from transformers import GPT2LMHeadModel, GPT2Config
 
 
 class LabTOPModel(nn.Module):
-    def __init__(self, config):
+    def __init__(self, config, tokenizer):
         super(LabTOPModel, self).__init__()
-        self.hidden_size = config["model"]["hidden_size"]
-        self.vocab_size = config["model"]["vocab_size"]
-        self.num_layers = config["model"]["num_layers"]
-        self.num_heads = config["model"]["num_heads"]
+        self.hidden_size = config["model"]["hidden_dim"]
+        self.vocab_size = len(tokenizer)
+        self.num_layers = config["model"]["n_layers"]
+        self.num_heads = config["model"]["n_heads"]
         self.dropout = config["model"]["dropout"]
-        self.max_seq_len = config["model"]["max_seq_len"]
+        self.max_seq_len = config["max_seq_len"]
         self.activation_func = config["train"]["activation_func"]
-        self.bos_token_id = config["train"]["bos_token_id"]
-        self.eos_token_id = config["train"]["eos_token_id"]
+        self.bos_token_id = tokenizer.bos_token_id
+        self.eos_token_id = tokenizer.eos_token_id
         
         model_config = GPT2Config(
             activation_function=self.activation_func,
@@ -29,8 +29,10 @@ class LabTOPModel(nn.Module):
             vocab_size=self.vocab_size,
         )
         
+        
         # Transformer-based encoder for task instructions
         self.model = GPT2LMHeadModel(model_config)
+        self.tokenizer = tokenizer
         
     def model_memory_usage(self):
         total_mem = 0
@@ -54,10 +56,12 @@ class LabTOPModel(nn.Module):
     def forward(self, input_ids, attention_mask=None):
         # input_ids: (batch_size, seq_len)
         # attention_mask: (batch_size, seq_len)
+        
         outputs = self.model(
                 input_ids = input_ids,
                 attention_mask = attention_mask,
         )
+        
         logits = outputs['logits']
         return logits
 

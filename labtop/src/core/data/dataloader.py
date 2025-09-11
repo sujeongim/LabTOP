@@ -1,7 +1,8 @@
 import torch
 from torch.utils.data import DataLoader
-from typing import Dict, List, Tuple, Optional
+from typing import Dict, List, Tuple, Optional, Union
 from torch.nn.utils.rnn import pad_sequence
+from core.data.dataset import EHRGPTDataset, PromptTestDataset
 
 
 
@@ -109,11 +110,11 @@ class PromptTestDataLoader:
     
     
 def get_dataloader(
+    cfg, 
     dataset: Union[EHRGPTDataset, PromptTestDataset],
-    batch_size: int,
     shuffle: bool = True,
     num_workers: int = 0,
-    pin_memory: bool = True
+    pin_memory: bool = True, 
 ) -> Union[EHRGPTDataLoader, PromptTestDataLoader]:
     """
     Creates and returns a DataLoader for the given dataset.
@@ -128,10 +129,11 @@ def get_dataloader(
     Returns:
         An instance of EHRGPTDataLoader or PromptTestDataLoader
     """
+    
     if isinstance(dataset, EHRGPTDataset):
         return EHRGPTDataLoader(
             dataset=dataset,
-            batch_size=batch_size,
+            batch_size=cfg.train.batch_size,
             shuffle=shuffle,
             num_workers=num_workers,
             pin_memory=pin_memory
@@ -139,7 +141,7 @@ def get_dataloader(
     elif isinstance(dataset, PromptTestDataset):
         return PromptTestDataLoader(
             dataset=dataset,
-            batch_size=batch_size,
+            batch_size=cfg.train.batch_size,
             shuffle=shuffle,
             num_workers=num_workers,
             pin_memory=pin_memory

@@ -1,17 +1,21 @@
 import yaml
 import torch
-from src.core.models.model import LabTOPModel
-from src.core.models.inference import Inference
-from src.core.utils.metrics import PerformanceEvaluator
-from src.core.utils.logging import get_logger
+import os
+import sys
+import hydra
+from omegaconf import DictConfig
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, project_root)
 
-def evaluate():
-    # Load config
-    with open("configs/config.yaml", "r") as f:
-        config = yaml.safe_load(f)
-    
+from core.models.model import LabTOPModel
+from core.models.inference import Inference
+from core.utils.metrics import PerformanceEvaluator
+from core.utils.logging import get_logger
+
+@hydra.main(config_path="../config", config_name="config", version_base="1.3")
+def evaluate(cfg:DictConfig):
     # Initialize inference
-    inference = Inference(config)
+    inference = Inference(cfg)
     logger = get_logger("evaluate")
     
     save_path = inference.predict()
@@ -19,9 +23,11 @@ def evaluate():
     # Compute metrics
     evaluator = PerformanceEvaluator()
     weighted_nmae, weighted_smape = evaluator.calculate(save_path)
-    print("Evaluation Results:")
-    print(f"Weighted NMAE: {weighted_nmae}")
-    print(f"Weighted SMAPE: {weighted_smape}")
-
+   
+    # Log results
+    logger.info("Evaluation Results:")
+    logger.info(f"Weighted NMAE: {weighted_nmae}")
+    logger.info(f"Weighted SMAPE: {weighted_smape}")
+    
 if __name__ == "__main__":
     evaluate()

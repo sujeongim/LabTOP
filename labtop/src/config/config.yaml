@@ -28,6 +28,20 @@ mode :
 num_workers : 8
 split : train
 
+# 병렬화 설정
+n_workers : 8  # 병렬 처리에 사용할 워커 수 (CPU 코어 수에 따라 조정)
+chunk_size : 1000  # 청크 크기 (메모리 사용량과 성능의 균형)
+
+# 디버깅 설정
+debug_datetime : false  # datetime 변환 문제 진단을 위한 상세 로깅 활성화
+skip_invalid_datetime : true  # 잘못된 datetime을 가진 행 자동 제거
+
 # genhpf
 limit_events : true
 limit_num_tokens : 4096
+
+use_10_labitems : false
+drop_duplicates_by : item_&text
+
+# debugging mode
+debugging_mode: true

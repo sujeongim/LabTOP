@@ -1,6 +1,7 @@
 data_path : ${data_path}
 raw_data_path : /nfs_data_storage/eicu/
 ext : .csv
+select_items : true
 
 #cohort
 use_tables :
@@ -52,3 +53,6 @@ add_end_of_event : true
 # just for gpt 4o
 sampling: false
 sampling_ratio: 0.1
+
+# debugging mode
+debug_table_sample_ratio: 0.1

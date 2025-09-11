@@ -1,6 +1,7 @@
 data_path : ${data_path}
-raw_data_path : /nfs_data_storage/mimic-iv-3.0/physionet.org/files/mimiciv/3.0/
+raw_data_path : /home/data_storage/mimic-iv-3.1
 ext : .csv
+select_items : true
 
 # cohort
 use_tables :
@@ -50,3 +51,5 @@ no_col_name : true
 # just for gpt 4o
 sampling: false
 sampling_ratio: 0.1
+
+debug_table_sample_ratio: 0.01

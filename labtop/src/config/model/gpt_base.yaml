@@ -3,7 +3,7 @@ model_path : false # model path if try to continue learning
 embed_dim : 512     # 768 : bert-base
 hidden_dim : 512    # hidden_dim 
 n_heads : 8
-n_layers : 12 
+n_layers : 12
 dropout : 0.1
 
 sinusodial : false

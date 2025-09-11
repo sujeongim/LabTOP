@@ -1,6 +1,7 @@
 data_path : ${data_path}
 raw_data_path : /nfs_data_storage/hirid/1.1.1
 ext : .csv
+select_items : true
 
 # cohort
 use_tables :
@@ -45,3 +46,6 @@ no_col_name : true
 # just for gpt 4o
 sampling: false
 sampling_ratio: 0.1
+
+# debugging mode
+debug_table_sample_ratio: 0.1

@@ -2,6 +2,7 @@ data_path : ${data_path}
 raw_data_path : mimic-iv-3.0/physionet.org/files/mimiciv/3.0/
 cohort_path : mimiciv_cohort_3.0.csv
 dest_path : data
+select_items : true
 
 min_los : 6
 
@@ -40,3 +41,6 @@ add_end_of_event : true
 # just for gpt 4o
 sampling: false
 sampling_ratio: 0.1
+
+# debugging mode
+debug_table_sample_ratio: 0.1
